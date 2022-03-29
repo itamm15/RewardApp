@@ -1,0 +1,11 @@
+<h4> Users </h4>
+<ul class = "collection">
+    <%= for user <- @users do%>
+        <li class = "collection-item">
+            <%= "#{user.id}. #{user.name} #{user.surname}"%>
+            <div class = "right">
+                <%="#{user.points}"%>
+            </div>
+        </li>
+    <%end%>
+</ul>

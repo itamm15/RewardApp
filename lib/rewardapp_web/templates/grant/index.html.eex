@@ -1,0 +1,8 @@
+<%= form_for @changeSet, Routes.grant_path(@conn, :login), fn f -> %>
+    <div class="form-group">
+        <%= text_input f, :user, placeholder: "Username", class: "form-control" %>
+        <!--VALIDATION -->
+        <%= error_tag f, :user%>
+    </div>
+    <%= submit "Login", class: "btn btn-primary" %>
+<%end%>

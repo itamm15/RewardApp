@@ -1,0 +1,15 @@
+<h4> Users </h4>
+<%= for {key, value} <- @userp do %>
+    <%="You are logged as #{value}"%>
+<%end%>
+<ul class = "collection">
+    <%= for user <- @users do%>
+        <li class = "collection-item">
+            <%= "#{user.id}. #{user.name} #{user.surname}"%>
+            <div class = "right">
+                <%= link "Add points", to: Routes.grant_path(@conn, :add, user: user.id)%>
+            </div>
+        </li>
+    <%end%>
+</ul>
+
