@@ -75,12 +75,77 @@ defmodule RewardappWeb.GrantController do
   def add(conn, %{"user" => userID}) do
     changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
     users = Rewardapp.Repo.all(RewardappWeb.User)
-    #IO.puts("++++++++")
+    IO.puts("I am in add ++++++++")
     #IO.inspect(params)
     IO.inspect(userID)
 
-
     render(conn, "add.html", changeSet: changeSet, users: users, userID: userID)
   end
+
+  def update(conn, params) do
+    changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
+    users = Rewardapp.Repo.all(RewardappWeb.User)
+    IO.puts("I am in update function +++++")
+    IO.inspect(params)
+    user = params["user"]
+    IO.inspect(user)
+    points = String.to_integer(user["points"])
+    IO.inspect(points)
+
+    id = String.to_integer(params["id"])
+    IO.inspect(id)
+
+    #GETTING USER INFO FROM SESSION, TO TAKE VALUES TO UPDATE
+
+    sessionUser = Plug.Conn.get_session(conn, :userInfo)
+    IO.inspect(sessionUser)
+    currentMonth = currentMonth(conn)
+    IO.inspect(currentMonth)
+
+    currentPoints = Map.get(sessionUser, String.to_atom(currentMonth))
+    IO.inspect(currentPoints)
+
+
+    #changeSet = RewardappWeb.User.changeset(Rewardapp.User, String.to_atom(currentMonth))
+
+    case result = currentPoints - points do
+      result when result < 0 ->
+        IO.puts("THE RESULT IS LESS THEN ZERO")
+        conn
+        |> put_flash(:error, "You do not have enough points.")
+        |> redirect(to: Routes.grant_path(conn, :add, %{"user" => id}))
+      result when result >= 0 ->
+        IO.puts("THE RESULT IS GREATER OR EQUAL ZERO")
+        conn
+        |> put_flash(:info, "Added points")
+        |> redirect(to: Routes.grant_path(conn, :main))
+        #|> Plug.Conn.delete_session(:userInfo)
+    end
+
+    render(conn, "start.html", changeSet: changeSet, users: users)
+  end
+
+  def currentMonth(conn) do
+    date = Date.utc_today()
+    month = date.month
+    IO.inspect(month)
+
+    case month do
+      1 -> "january"
+      2 -> "february"
+      3 -> "march"
+      4 -> "april"
+      5 -> "may"
+      6 -> "june"
+      7 ->  "july"
+      8 -> "august"
+      9 -> "september"
+      10 -> "october"
+      11 -> "november"
+      12 -> "december"
+    end
+
+  end
+
 
 end

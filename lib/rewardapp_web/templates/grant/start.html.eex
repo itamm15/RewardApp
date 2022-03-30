@@ -1,40 +1,48 @@
 <% inspect person = Plug.Conn.get_session(@conn, :userInfo) %>
 
 <% person2 = currentUser(@conn) %>
-<h3>
-<%= "Hello #{person2.name} #{person2.surname}"%>
-</h3>
+<h4>
+<%= "Hello #{person2.name} #{person2.surname}. You have #{person2.points} points."%>
+<br>
 
-    <div class = "row">
-        <div class = "col s2 ">January</div>
-        <div class = "col s2 ">February</div>
-        <div class = "col s2 ">March</div>
-        <div class = "col s2 ">April</div>
-        <div class = "col s2 ">May</div>
-        <div class = "col s2 ">June</div>
-        <div class = "col s2 ">July</div>
-        <div class = "col s2 ">August</div>
-        <div class = "col s2 ">September</div>
-        <div class = "col s2 ">October</div>
-        <div class = "col s2 ">November</div>
-        <div class = "col s2">December</div>
-    </div>
+<%= "Your remaining points for given month:"%>
+</h4>
 
-    <div class = "row">
-        <div class = "col s1 l1"><%=person2.january%></div>
-        <div class = "col s1 l1"><%=person2.february%></div>
-        <div class = "col s1 l1"><%=person2.march%></div>
-        <div class = "col s1 l1"><%=person2.april%></div>
-        <div class = "col s1 l1"><%=person2.may%></div>
-        <div class = "col s1 l1"><%=person2.june%></div>
-        <div class = "col s1 l1"><%=person2.july%></div>
-        <div class = "col s1 l1"><%=person2.august%></div>
-        <div class = "col s1 l1"><%=person2.september%></div>
-        <div class = "col s1 l1"><%=person2.october%></div>
-        <div class = "col s1 l1"><%=person2.november%></div>
-        <div class = "col s1 l1"><%=person2.december%></div>
-    </div>
+<div class = "row">
+    <div class = "col s2 ">January</div>
+    <div class = "col s2 ">February</div>
+    <div class = "col s2 ">March</div>
+    <div class = "col s2 ">April</div>
+    <div class = "col s2 ">May</div>
+    <div class = "col s2 ">June</div>
+</div>
 
+<div class = "row">
+    <div class = "col s2"><%=person2.january%></div>
+    <div class = "col s2"><%=person2.february%></div>
+    <div class = "col s2"><%=person2.march%></div>
+    <div class = "col s2"><%=person2.april%></div>
+    <div class = "col s2"><%=person2.may%></div>
+    <div class = "col s2"><%=person2.june%></div>
+</div>
+
+<div class = "row">
+    <div class = "col s2">July</div>
+    <div class = "col s2">August</div>
+    <div class = "col s2">September</div>
+    <div class = "col s2">October</div>
+    <div class = "col s2">November</div>
+    <div class = "col s2">December</div>
+</div>
+
+<div class ="row">
+    <div class = "col s2"><%=person2.july%></div>
+    <div class = "col s2"><%=person2.august%></div>
+    <div class = "col s2"><%=person2.september%></div>
+    <div class = "col s2"><%=person2.october%></div>
+    <div class = "col s2"><%=person2.november%></div>
+    <div class = "col s2"><%=person2.december%></div>
+</div>
 <h4> Users </h4>
 
 <ul class = "collection">
