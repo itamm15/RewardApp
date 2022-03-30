@@ -1,0 +1,6 @@
+<h3> Grant points </h3>
+
+<!-- Just a random info for me, dont look here, hehe -->
+
+date = Date.utc_today()
+month = date.month   

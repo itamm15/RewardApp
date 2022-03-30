@@ -1,7 +1,42 @@
+<% inspect person = Plug.Conn.get_session(@conn, :userInfo) %>
+
+<% person2 = currentUser(@conn) %>
+<h3>
+<%= "Hello #{person2.name} #{person2.surname}"%>
+</h3>
+
+    <div class = "row">
+        <div class = "col s2 ">January</div>
+        <div class = "col s2 ">February</div>
+        <div class = "col s2 ">March</div>
+        <div class = "col s2 ">April</div>
+        <div class = "col s2 ">May</div>
+        <div class = "col s2 ">June</div>
+        <div class = "col s2 ">July</div>
+        <div class = "col s2 ">August</div>
+        <div class = "col s2 ">September</div>
+        <div class = "col s2 ">October</div>
+        <div class = "col s2 ">November</div>
+        <div class = "col s2">December</div>
+    </div>
+
+    <div class = "row">
+        <div class = "col s1 l1"><%=person2.january%></div>
+        <div class = "col s1 l1"><%=person2.february%></div>
+        <div class = "col s1 l1"><%=person2.march%></div>
+        <div class = "col s1 l1"><%=person2.april%></div>
+        <div class = "col s1 l1"><%=person2.may%></div>
+        <div class = "col s1 l1"><%=person2.june%></div>
+        <div class = "col s1 l1"><%=person2.july%></div>
+        <div class = "col s1 l1"><%=person2.august%></div>
+        <div class = "col s1 l1"><%=person2.september%></div>
+        <div class = "col s1 l1"><%=person2.october%></div>
+        <div class = "col s1 l1"><%=person2.november%></div>
+        <div class = "col s1 l1"><%=person2.december%></div>
+    </div>
+
 <h4> Users </h4>
-<%= for {key, value} <- @userp do %>
-    <%="You are logged as #{value}"%>
-<%end%>
+
 <ul class = "collection">
     <%= for user <- @users do%>
         <li class = "collection-item">

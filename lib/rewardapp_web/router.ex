@@ -24,7 +24,7 @@ defmodule RewardappWeb.Router do
     get "/admin", GrantController, :admin
     get "/main", GrantController, :main
     get "/", GrantController, :index
-    post "/users", GrantController, :login
+    post "/", GrantController, :login
     get "/add", GrantController, :add
 
   end
