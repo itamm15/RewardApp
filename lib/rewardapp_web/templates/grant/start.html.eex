@@ -1,4 +1,3 @@
-<% inspect person = Plug.Conn.get_session(@conn, :userInfo) %>
 
 <% person2 = currentUser(@conn) %>
 <h4>
@@ -48,7 +47,7 @@
 <ul class = "collection">
     <%= for user <- @users do%>
         <li class = "collection-item">
-            <%= "#{user.id}. #{user.name} #{user.surname}"%>
+            <%= "#{user.name} #{user.surname}"%>
             <div class = "right">
                 <%= link "Add points", to: Routes.grant_path(@conn, :add, user: user.id)%>
             </div>

@@ -2,7 +2,8 @@ defmodule RewardappWeb.GrantView do
   use RewardappWeb, :view
 
   def currentUser(conn) do
-    Plug.Conn.get_session(conn, :userInfo)
+    person = Plug.Conn.get_session(conn, :userInfo)
+    post = Rewardapp.Repo.get!(RewardappWeb.User, person.id)
   end
 
   def currentMonth(conn) do

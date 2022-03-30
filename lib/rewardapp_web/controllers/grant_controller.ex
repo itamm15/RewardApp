@@ -40,6 +40,7 @@ defmodule RewardappWeb.GrantController do
     if value == "admin" do
       conn
       |> put_flash(:info, "Logged as admin")
+      |> Plug.Conn.put_session(:admin, value)
       |> redirect(to: Routes.grant_path(conn, :admin), users: users, changeSet: changeSet)
     end
 
@@ -105,7 +106,6 @@ defmodule RewardappWeb.GrantController do
     currentPoints = Map.get(sessionUser, String.to_atom(currentMonth))
     IO.inspect(currentPoints)
 
-
     #changeSet = RewardappWeb.User.changeset(Rewardapp.User, String.to_atom(currentMonth))
 
     case result = currentPoints - points do
@@ -116,10 +116,44 @@ defmodule RewardappWeb.GrantController do
         |> redirect(to: Routes.grant_path(conn, :add, %{"user" => id}))
       result when result >= 0 ->
         IO.puts("THE RESULT IS GREATER OR EQUAL ZERO")
-        conn
-        |> put_flash(:info, "Added points")
-        |> redirect(to: Routes.grant_path(conn, :main))
-        #|> Plug.Conn.delete_session(:userInfo)
+
+
+        # LOGGED USER DATA UPDATE
+        post = Rewardapp.Repo.get!(RewardappWeb.User, sessionUser.id)
+        IO.inspect(post)
+        userInfo = post
+        post = Ecto.Changeset.change(post, %{String.to_atom(currentMonth) => currentPoints - points})
+        IO.inspect(post)
+
+        case Rewardapp.Repo.update(post) do
+          {:ok, _struct} ->
+
+            # CHOOSEN USER DATA UPDATE
+
+            postC = Rewardapp.Repo.get!(RewardappWeb.User, id)
+            previousPoints = postC.points
+            result = previousPoints + points
+            IO.inspect(points)
+            postC = Ecto.Changeset.change(postC, %{:points => points + previousPoints})
+
+            case Rewardapp.Repo.update(postC) do
+              {:ok, _struct } ->
+                conn
+                |> put_flash(:info, "Added points")
+                |> Plug.Conn.delete_session(:userInfo)
+                |> Plug.Conn.put_session(:userInfo, userInfo)
+                |> redirect(to: Routes.grant_path(conn, :main))
+              {:error, _params} ->
+                  conn
+                  |> put_flash(:info, "There was some error during saving to database")
+                  |> redirect(to: Routes.grant_path(conn, :main))
+            end
+
+          {:error, _params} ->
+            conn
+            |> put_flash(:info, "There was some error during saving to database")
+            |> redirect(to: Routes.grant_path(conn, :main))
+        end
     end
 
     render(conn, "start.html", changeSet: changeSet, users: users)
