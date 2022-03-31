@@ -1,6 +1,16 @@
 defmodule RewardappWeb.GrantView do
   use RewardappWeb, :view
 
+
+  def mailer_view do
+    quote do
+      use Phoenix.View, root: "lib/my_app_web/templates",
+                        namespace: MyAppWeb
+
+      use Phoenix.HTML
+    end
+  end
+
   def currentUser(conn) do
     person = Plug.Conn.get_session(conn, :userInfo)
     post = Rewardapp.Repo.get!(RewardappWeb.User, person.id)

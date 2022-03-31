@@ -9,10 +9,12 @@ config :rewardapp, Rewardapp.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
- #Configure mail
+
+  #Configure mail
 
 config :rewardapp, Rewardapp.Mailer,
-  adapter: Bamboo.TestAdapter
+  adapter: Bamboo.LocalAdapter,
+  open_email_in_browser_url: "http://localhost:4000/mailbox"
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

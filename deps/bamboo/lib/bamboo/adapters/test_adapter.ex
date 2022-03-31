@@ -1,6 +1,6 @@
 defmodule Bamboo.TestAdapter do
   @moduledoc """
-  Used for testing email delivery.
+  Used for testing email delivery
 
   No emails are sent, instead a message is sent to the current process and can
   be asserted on with helpers from `Bamboo.Test`.
@@ -22,7 +22,7 @@ defmodule Bamboo.TestAdapter do
   @doc false
   def deliver(email, _config) do
     email = clean_assigns(email)
-    send(test_process(), {:delivered_email, email})
+    send test_process(), {:delivered_email, email}
   end
 
   defp test_process do
@@ -33,16 +33,14 @@ defmodule Bamboo.TestAdapter do
     case config[:deliver_later_strategy] do
       nil ->
         Map.put(config, :deliver_later_strategy, Bamboo.ImmediateDeliveryStrategy)
-
       Bamboo.ImmediateDeliveryStrategy ->
         config
-
       _ ->
         raise ArgumentError, """
         Bamboo.TestAdapter requires that the deliver_later_strategy is
         Bamboo.ImmediateDeliveryStrategy
 
-        Instead it got: #{inspect(config[:deliver_later_strategy])}
+        Instead it got: #{inspect config[:deliver_later_strategy]}
 
         Please remove the deliver_later_strategy from your config options, or
         set it to Bamboo.ImmediateDeliveryStrategy.
@@ -54,7 +52,4 @@ defmodule Bamboo.TestAdapter do
   def clean_assigns(email) do
     %{email | assigns: :assigns_removed_for_testing}
   end
-
-  @doc false
-  def supports_attachments?, do: true
 end

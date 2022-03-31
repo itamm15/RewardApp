@@ -1,17 +1,16 @@
 defmodule Bamboo.MandrillHelper do
   @moduledoc """
-  Functions for using features specific to Mandrill (e.g. tagging, merge vars,
-  templates).
+  Functions for using features specific to Mandrill e.g. tagging, merge vars, templates
   """
 
   alias Bamboo.Email
 
   @doc """
-  Put extra message parameters that are used by Mandrill.
+  Put extra message parameters that are used by Mandrill
 
   Parameters set with this function are sent to Mandrill when used along with
-  the `Bamboo.MandrillAdapter`. You can set things like `important`,
-  `merge_vars`, and whatever else you need that the Mandrill API supports.
+  the Bamboo.MandrillAdapter. You can set things like `important`, `merge_vars`,
+  and whatever else you need that the Mandrill API supports.
 
   ## Example
 
@@ -32,20 +31,19 @@ defmodule Bamboo.MandrillHelper do
   def put_param(%Email{private: %{message_params: _}} = email, key, value) do
     put_in(email.private[:message_params][key], value)
   end
-
   def put_param(email, key, value) do
     email |> Email.put_private(:message_params, %{}) |> put_param(key, value)
   end
 
   @doc """
-  Set merge_vars that are used by Mandrill.
+  Set merge_vars that are used by Mandrill 
 
   ## Example
 
       email
       |> put_merge_vars(users, fn(user) -> %{first_name: user.first_name} end)
 
-  A convenience function for:
+  A convenience function for: 
 
       email
       |> put_param(email, "merge_vars", [
@@ -70,23 +68,22 @@ defmodule Bamboo.MandrillHelper do
       ])
   """
   def put_merge_vars(email, enumerable, fun) do
-    merge_vars =
-      Enum.map(enumerable, fn e ->
-        %{
-          rcpt: e.email,
-          vars: merge_vars(e, fun)
-        }
-      end)
+    merge_vars = Enum.map(enumerable, fn(e) ->
+      %{
+        rcpt: e.email,
+        vars: merge_vars(e, fun)
+      }
+    end)
 
     email |> put_param("merge_vars", merge_vars)
   end
 
   defp merge_vars(e, fun) do
     fun.(e)
-    |> Enum.map(fn {key, value} ->
+    |> Enum.map(fn({ key, value }) ->
       %{
-        name: to_string(key),
-        content: value
+        "name": to_string(key),
+        "content": value
       }
     end)
   end
@@ -109,7 +106,7 @@ defmodule Bamboo.MandrillHelper do
   Send emails using Mandrill's template API.
 
   Setup Mandrill to send using a named template with template content. Use this
-  in conjunction with merge vars to offload template rendering to Mandrill. The
+  in conjuction with merge vars to offload template rendering to Mandrill. The
   template name specified here must match the template name stored in Mandrill.
   Mandrill's API docs for this can be found [here](https://www.mandrillapp.com/api/docs/messages.JSON.html#method=send-template).
 

@@ -1,5 +1,6 @@
 defmodule RewardappWeb.Router do
   use RewardappWeb, :router
+  use Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -29,6 +30,10 @@ defmodule RewardappWeb.Router do
     post "/add/:id", GrantController, :update
     get "/admin/delete/:id", GrantController, :delete
 
+  end
+
+  if Mix.env == :dev do
+    forward "/mailbox", Bamboo.EmailPreviewPlug
   end
 
   # Other scopes may use custom stacks.
@@ -61,7 +66,7 @@ defmodule RewardappWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      #forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
 end

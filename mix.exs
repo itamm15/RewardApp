@@ -20,7 +20,7 @@ defmodule Rewardapp.MixProject do
   def application do
     [
       mod: {Rewardapp.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :bamboo]
     ]
   end
 
@@ -48,7 +48,7 @@ defmodule Rewardapp.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
-      {:bamboo, "~> 1.5"},
+      {:bamboo, "~> 0.8"},
       {:plug_cowboy, "~> 2.5"}
     ]
   end

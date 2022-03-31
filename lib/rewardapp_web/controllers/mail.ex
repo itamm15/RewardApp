@@ -12,7 +12,5 @@ defmodule Rewardapp.Email do
   defp base_email() do
     new_email()
     |> from("rewardapp@gmail.com") # Set a default from
-    |> put_html_layout({MyApp.LayoutView, "email.html"}) # Set default layout
-    |> put_text_layout({MyApp.LayoutView, "email.text"}) # Set default text layout
   end
 end

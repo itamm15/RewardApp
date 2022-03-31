@@ -1,78 +1,45 @@
 defmodule Bamboo.Phoenix do
   @moduledoc """
-  Render emails with Phoenix templates and layouts.
+  Render templates and layouts with Phoenix.
 
-  This module allows rendering emails with Phoenix layouts and views. Pass an
-  atom (e.g. `:welcome_email`) as the template name to render both HTML and
+  This module makes it very easy to render layouts and views using Phoenix.
+  Pass an atom (e.g. `:welcome_email`) as the template name to render HTML and
   plain text emails. Use a string if you only want to render one type, e.g.
   `"welcome_email.text"` or `"welcome_email.html"`.
 
   ## Examples
 
-  _Set the text and HTML layout for an email._
-
-      defmodule MyApp.Email do
+      defmodule Email do
         use Bamboo.Phoenix, view: MyApp.EmailView
 
-        def welcome_email do
+        def text_and_html_email_with_layout do
           new_email()
+          # You could set just a text layout or just an html layout
           |> put_text_layout({MyApp.LayoutView, "email.text"})
           |> put_html_layout({MyApp.LayoutView, "email.html"})
-          |> render(:welcome) # Pass atom to render html AND plain text templates
-        end
-      end
-
-  _Set both the text and HTML layout at the same time for an email._
-
-      defmodule MyApp.Email do
-        use Bamboo.Phoenix, view: MyApp.EmailView
-
-        def welcome_email do
-          new_email()
+          # Or you can set a layout for both html and text at the same time
           |> put_layout({MyApp.LayoutView, :email})
-          |> render(:welcome)
+          # Pass an atom to render html AND plain text templates
+          |> render(:text_and_html_email)
         end
-      end
 
-  _Render both text and html emails without layouts._
-
-      defmodule MyApp.Email do
-        use Bamboo.Phoenix, view: MyApp.EmailView
-
-        def welcome_email do
+        def text_and_html_email_without_layouts do
           new_email()
-          |> render(:welcome)
+          |> render(:text_and_html_email)
         end
-      end
 
-  _Make assigns available to a template._
-
-      defmodule MyApp.Email do
-        use Bamboo.Phoenix, view: MyApp.EmailView
-
-        def welcome_email(user) do
+        def email_with_assigns(user) do
           new_email()
+          # @user will be available in the template
+          |> render(:email_with_assigns, user: user)
+        end
+
+        def email_with_already_assigned_user(user) do
+          new_email()
+          # @user will be available in the template
           |> assign(:user, user)
-          |> render(:welcome)
+          |> render(:email_with_assigns)
         end
-      end
-
-  _Make assigns available to a template during render call._
-
-      defmodule MyApp.Email do
-        use Bamboo.Phoenix, view: MyApp.EmailView
-
-        def welcome_email(user) do
-          new_email()
-          |> put_html_layout({MyApp.LayoutView, "email.html"})
-          |> render(:welcome, user: user)
-        end
-      end
-
-  _Render an email by passing the template string to render._
-
-      defmodule MyApp.Email do
-        use Bamboo.Phoenix, view: MyApp.EmailView
 
         def html_email do
           new_email
@@ -92,7 +59,7 @@ defmodule Bamboo.Phoenix do
         use Bamboo.Phoenix, view: Myapp.EmailView
 
         def sign_in_email(person) do
-          base_email()
+          base_email
           |> to(person)
           |> subject("Your Sign In Link")
           |> assign(:person, person)
@@ -136,14 +103,13 @@ defmodule Bamboo.Phoenix do
 
   defmacro __using__(view: view_module) do
     verify_phoenix_dep()
-
     quote do
       import Bamboo.Email
       import Bamboo.Phoenix, except: [render: 3]
       @email_view_module unquote(view_module)
 
       @doc """
-      Render an Phoenix template and set the body on the email.
+      Render an Phoenix template and set the body on the email
 
       Pass an atom as the template name (:welcome_email) to render HTML *and* plain
       text emails. Use a string if you only want to render one type, e.g.
@@ -154,10 +120,9 @@ defmodule Bamboo.Phoenix do
       end
     end
   end
-
   defmacro __using__(opts) do
     raise ArgumentError, """
-    expected Bamboo.Phoenix to have a view set, instead got: #{inspect(opts)}.
+    expected Bamboo.Phoenix to have a view set, instead got: #{inspect opts}.
 
     Please set a view e.g. use Bamboo.Phoenix, view: MyApp.MyView
     """
@@ -166,12 +131,12 @@ defmodule Bamboo.Phoenix do
   defp verify_phoenix_dep do
     unless Code.ensure_loaded?(Phoenix) do
       raise "You tried to use Bamboo.Phoenix, but Phoenix module is not loaded. " <>
-              "Please add phoenix to your dependencies."
+      "Please add phoenix to your dependencies."
     end
   end
 
   @doc """
-  Render a Phoenix template and set the body on the email.
+  Render a Phoenix template and set the body on the email
 
   Pass an atom as the template name to render HTML *and* plain text emails,
   e.g. `:welcome_email`. Use a string if you only want to render one type, e.g.
@@ -182,7 +147,7 @@ defmodule Bamboo.Phoenix do
   end
 
   @doc """
-  Sets the layout when rendering HTML templates.
+  Sets the layout when rendering HTML templates
 
   ## Example
 
@@ -197,7 +162,7 @@ defmodule Bamboo.Phoenix do
   end
 
   @doc """
-  Sets the layout when rendering plain text templates.
+  Sets the layout when rendering plain text templates
 
   ## Example
 
@@ -212,14 +177,14 @@ defmodule Bamboo.Phoenix do
   end
 
   @doc """
-  Sets the layout for rendering plain text and HTML templates.
+  Sets the layout for rendering plain text and HTML templates
 
   ## Example
 
       def text_and_html_email_layout do
         new_email
         # Will use MyApp.LayoutView with the email.html template for html emails
-        # and MyApp.LayoutView with the email.text template for text emails
+        # and MyApp.LayoutView with the email.html template for text emails
         |> put_layout({MyApp.LayoutView, :email})
       end
   """
@@ -230,7 +195,7 @@ defmodule Bamboo.Phoenix do
   end
 
   @doc """
-  Sets an assign for the email. These will be available when rendering the email
+  Sets an assign for the email. These will be availabe when rendering the email
   """
   def assign(%{assigns: assigns} = email, key, value) do
     %{email | assigns: Map.put(assigns, key, value)}
@@ -247,11 +212,9 @@ defmodule Bamboo.Phoenix do
   end
 
   defp put_default_layouts(%{private: private} = email) do
-    private =
-      private
+    private = private
       |> Map.put_new(:html_layout, false)
       |> Map.put_new(:text_layout, false)
-
     %{email | private: private}
   end
 
@@ -290,15 +253,10 @@ defmodule Bamboo.Phoenix do
     cond do
       String.ends_with?(template, ".html") ->
         email |> Map.put(:html_body, render_html(email, template))
-
       String.ends_with?(template, ".text") ->
         email |> Map.put(:text_body, render_text(email, template))
-
-      true ->
-        raise ArgumentError, """
-        Template name must end in either ".html" or ".text". Template name was #{
-          inspect(template)
-        }
+      true -> raise ArgumentError, """
+        Template name must end in either ".html" or ".text". Template name was #{inspect template}
 
         If you would like to render both and html and text template,
         use an atom without an extension instead.
@@ -311,9 +269,9 @@ defmodule Bamboo.Phoenix do
     assigns = Map.put(email.assigns, :layout, email.private.html_layout)
 
     Phoenix.View.render_to_string(
-      email.private.view_module,
-      template,
-      assigns
+    email.private.view_module,
+    template,
+    assigns
     )
   end
 
@@ -321,9 +279,9 @@ defmodule Bamboo.Phoenix do
     assigns = Map.put(email.assigns, :layout, email.private.text_layout)
 
     Phoenix.View.render_to_string(
-      email.private.view_module,
-      template,
-      assigns
+    email.private.view_module,
+    template,
+    assigns
     )
   end
 end

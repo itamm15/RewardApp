@@ -2,6 +2,8 @@ defmodule RewardappWeb.GrantController do
   use RewardappWeb, :controller
   import Ecto.Query
 
+  alias Rewardapp.{Mailer, Email}
+
   def main(conn, params) do
     changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
     users = Rewardapp.Repo.all(RewardappWeb.User)
@@ -139,7 +141,8 @@ defmodule RewardappWeb.GrantController do
                   {:ok, _struct} ->
 
                     #ALL STATEMENTS ARE CORRECT, SO EMAIL MAY BE SENT
-                    Rewardapp.Email.rewardEmail(userEmail)
+                    Email.rewardEmail(userEmail) |> Mailer.deliver_now()
+                    IO.inspect(Rewardapp.Email.rewardEmail(userEmail))
                     conn
                     |> put_flash(:info, "Added points")
                     |> Plug.Conn.delete_session(:userInfo)
