@@ -10,13 +10,13 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 If you want to visit sites by your own, here are vailable routs:
 
-*"/admin"
-*"/main"
-*"/"
-*"/add"
-*"/add/:id"
-*"/admin/delete/:id"
-*"/mailbox" - to see mails, firstly log in and grant some points. Then redirect into /mailbox to see mail. 
+* "/admin"
+* "/main"
+* "/"
+* "/add"
+* "/add/:id"
+* "/admin/delete/:id"
+* "/mailbox" - to see mails, firstly log in and grant some points. Then redirect into /mailbox to see mail. 
 
 
 To log into, firstly import database, or add users into database. 
