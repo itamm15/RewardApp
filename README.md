@@ -10,12 +10,13 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 If you want to visit sites by your own, here are vailable routs:
 
-"/admin"
-"/main"
-"/"
-"/add"
-"/add/:id"
-"/admin/delete/:id"
+*"/admin"
+*"/main"
+*"/"
+*"/add"
+*"/add/:id"
+*"/admin/delete/:id"
+*"/mailbox" - to see mails, firstly log in and grant some points. Then redirect into /mailbox to see mail. 
 
 
 To log into, firstly import database, or add users into database. 
@@ -25,6 +26,7 @@ E.g. INSERT INTO users (name, surname, role, mail) VALUES ('mat', 'osi', 'member
 * NAME MUST BE UNIQUE!
 
 # To log in as member, just type member name
+#
 # To log in as admin, just type admin 
 
-#The authentication is just related on the user name, which by default is treated as unique value. 
+# The authentication is just related on the user name, which by default is treated as unique value. 
