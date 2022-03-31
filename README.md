@@ -25,8 +25,9 @@ E.g. INSERT INTO users (name, surname, role, mail) VALUES ('mat', 'osi', 'member
 
 * NAME MUST BE UNIQUE!
 
-# To log in as member, just type member name
-#
-# To log in as admin, just type admin 
+# LOGING INTO
+
+* To log in as member, just type member name
+* To log in as admin, just type admin 
 
 # The authentication is just related on the user name, which by default is treated as unique value. 
