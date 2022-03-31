@@ -54,15 +54,11 @@ defmodule RewardappWeb.GrantController do
       nil ->
         conn
         |> put_flash(:error, "Could not find the user")
-        #render(conn, "index.html", users: users, changeSet: changeSet)
         |> redirect(to: Routes.grant_path(conn, :index), users: users, changeSet: changeSet)
       _ ->
         conn
         |> Plug.Conn.put_session(:userInfo, userSpec)
         |> put_flash(:info, "Logged in")
-        #render(conn, "start.html", changeSet: changeSet, users: users, userp: userp)
-        #Old fashion version
-        #|> redirect(to: Routes.grant_path(conn, :main, userp: value), users: users, changeSet: changeSet)
         |> redirect(to: Routes.grant_path(conn, :main), users: users, changeSet: changeSet)
     end
 
@@ -120,10 +116,7 @@ defmodule RewardappWeb.GrantController do
 
         # LOGGED USER DATA UPDATE
 
-        post = Ecto.Changeset.change(post, %{String.to_atom(currentMonth) => currentPoints - points})
-        IO.inspect(post)
-
-        case Rewardapp.Repo.update(post) do
+        case Rewardapp.Repo.update(Ecto.Changeset.change(post, %{String.to_atom(currentMonth) => currentPoints - points})) do
           {:ok, _struct} ->
 
             # CHOOSEN USER DATA UPDATE
@@ -132,9 +125,8 @@ defmodule RewardappWeb.GrantController do
             userrName = postC.name
             userEmail = postC.mail
             IO.inspect(points)
-            postC = Ecto.Changeset.change(postC, %{:points => previousPoints + points})
 
-            case Rewardapp.Repo.update(postC) do
+            case Rewardapp.Repo.update(Ecto.Changeset.change(postC, %{:points => previousPoints + points})) do
               {:ok, _struct } ->
 
                 #IF POINTS WERE ADD TO BOTH USERS
@@ -174,28 +166,6 @@ defmodule RewardappWeb.GrantController do
     render(conn, "start.html", changeSet: changeSet, users: users)
   end
 
-  def currentMonth(conn) do
-    date = Date.utc_today()
-    month = date.month
-    IO.inspect(month)
-
-    case month do
-      1 -> "january"
-      2 -> "february"
-      3 -> "march"
-      4 -> "april"
-      5 -> "may"
-      6 -> "june"
-      7 ->  "july"
-      8 -> "august"
-      9 -> "september"
-      10 -> "october"
-      11 -> "november"
-      12 -> "december"
-    end
-  end
-
-
   #ADMIN FUNCTION
 
   def admin(conn, params) do
@@ -208,8 +178,6 @@ defmodule RewardappWeb.GrantController do
   def delete(conn, %{"id" => rewardID}) do
 
     IO.puts("delete function +++++")
-    users = Rewardapp.Repo.all(RewardappWeb.User)
-    awards = Rewardapp.Repo.all(Rewardapp.Award)
 
     #GET INFO FROM awards
 
@@ -271,7 +239,29 @@ defmodule RewardappWeb.GrantController do
     end
   end
 
-  #MAILS
+ #CURRENT DATA
+
+ def currentMonth(conn) do
+  date = Date.utc_today()
+  month = date.month
+  IO.inspect(month)
+
+  case month do
+    1 -> "january"
+    2 -> "february"
+    3 -> "march"
+    4 -> "april"
+    5 -> "may"
+    6 -> "june"
+    7 ->  "july"
+    8 -> "august"
+    9 -> "september"
+    10 -> "october"
+    11 -> "november"
+    12 -> "december"
+  end
+end
+
 
 
 end
