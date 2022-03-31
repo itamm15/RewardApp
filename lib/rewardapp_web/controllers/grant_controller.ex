@@ -130,6 +130,7 @@ defmodule RewardappWeb.GrantController do
             postC = Rewardapp.Repo.get!(RewardappWeb.User, id)
             previousPoints = postC.points
             userrName = postC.name
+            userEmail = postC.mail
             IO.inspect(points)
             postC = Ecto.Changeset.change(postC, %{:points => previousPoints + points})
 
@@ -144,6 +145,9 @@ defmodule RewardappWeb.GrantController do
 
                 case Rewardapp.Repo.insert(%Rewardapp.Award{:userg => sessionUser.name, :userr => userrName, :points => points, :userrID => id, :usergID => sessionUser.id}) do
                   {:ok, _struct} ->
+
+                    #ALL STATEMENTS ARE CORRECT, SO EMAIL MAY BE SENT
+                    Rewardapp.Email.rewardEmail(userEmail)
                     conn
                     |> put_flash(:info, "Added points")
                     |> Plug.Conn.delete_session(:userInfo)
@@ -265,10 +269,9 @@ defmodule RewardappWeb.GrantController do
         |> put_flash(:error, "Error while deleting")
         |> redirect(to: Routes.grant_path(conn, :admin))
     end
-
-
-    IO.inspect(post)
-
   end
+
+  #MAILS
+
 
 end
