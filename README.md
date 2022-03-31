@@ -8,4 +8,23 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+If you want to visit sites by your own, here are vailable routs:
+
+"/admin"
+"/main"
+"/"
+"/add"
+"/add/:id"
+"/admin/delete/:id"
+
+
+To log into, firstly import database, or add users into database. 
+
+E.g. INSERT INTO users (name, surname, role, mail) VALUES ('mat', 'osi', 'member', 'osinski.mateusz15@gmail.com') 
+
+* NAME MUST BE UNIQUE!
+
+# To log in as member, just type member name
+# To log in as admin, just type admin 
+
+#The authentication is just related on the user name, which by default is treated as unique value. 
