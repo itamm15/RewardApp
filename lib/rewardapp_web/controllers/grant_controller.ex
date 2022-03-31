@@ -5,6 +5,7 @@ defmodule RewardappWeb.GrantController do
   def main(conn, params) do
     changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
     users = Rewardapp.Repo.all(RewardappWeb.User)
+    awards = Rewardapp.Repo.all(Rewardapp.Award)
     IO.inspect(params)
     IO.puts("I AM IN MAIN +++++ ")
     IO.inspect(Plug.Conn.get_session(conn, :userInfo))
@@ -12,13 +13,7 @@ defmodule RewardappWeb.GrantController do
     #person = Plug.Conn.get_session(conn, :userInfo)
     #IO.inspect(person)
 
-    render(conn, "start.html", changeSet: changeSet, users: users)
-  end
-
-  def admin(conn, params) do
-    changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
-    users = Rewardapp.Repo.all(RewardappWeb.User)
-    render(conn, "admin.html", changeSet: changeSet, users: users)
+    render(conn, "start.html", changeSet: changeSet, users: users, awards: awards)
   end
 
   @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -103,7 +98,12 @@ defmodule RewardappWeb.GrantController do
     currentMonth = currentMonth(conn)
     IO.inspect(currentMonth)
 
-    currentPoints = Map.get(sessionUser, String.to_atom(currentMonth))
+
+    post = Rewardapp.Repo.get!(RewardappWeb.User, sessionUser.id)
+    IO.inspect(post)
+    userInfo = post
+    currentPoints = Map.get(post, String.to_atom(currentMonth))
+
     IO.inspect(currentPoints)
 
     #changeSet = RewardappWeb.User.changeset(Rewardapp.User, String.to_atom(currentMonth))
@@ -119,9 +119,7 @@ defmodule RewardappWeb.GrantController do
 
 
         # LOGGED USER DATA UPDATE
-        post = Rewardapp.Repo.get!(RewardappWeb.User, sessionUser.id)
-        IO.inspect(post)
-        userInfo = post
+
         post = Ecto.Changeset.change(post, %{String.to_atom(currentMonth) => currentPoints - points})
         IO.inspect(post)
 
@@ -129,20 +127,33 @@ defmodule RewardappWeb.GrantController do
           {:ok, _struct} ->
 
             # CHOOSEN USER DATA UPDATE
-
             postC = Rewardapp.Repo.get!(RewardappWeb.User, id)
             previousPoints = postC.points
-            result = previousPoints + points
+            userrName = postC.name
             IO.inspect(points)
-            postC = Ecto.Changeset.change(postC, %{:points => points + previousPoints})
+            postC = Ecto.Changeset.change(postC, %{:points => previousPoints + points})
 
             case Rewardapp.Repo.update(postC) do
               {:ok, _struct } ->
-                conn
-                |> put_flash(:info, "Added points")
-                |> Plug.Conn.delete_session(:userInfo)
-                |> Plug.Conn.put_session(:userInfo, userInfo)
-                |> redirect(to: Routes.grant_path(conn, :main))
+
+                #IF POINTS WERE ADD TO BOTH USERS
+                #I CAN ADD TO REWARDS TABLE INFORMATION
+                #userg - user, that gave points
+                #userr - user, that received points
+                #points - number of points, that was given
+
+                case Rewardapp.Repo.insert(%Rewardapp.Award{:userg => sessionUser.name, :userr => userrName, :points => points, :userrID => id, :usergID => sessionUser.id}) do
+                  {:ok, _struct} ->
+                    conn
+                    |> put_flash(:info, "Added points")
+                    |> Plug.Conn.delete_session(:userInfo)
+                    |> Plug.Conn.put_session(:userInfo, userInfo)
+                    |> redirect(to: Routes.grant_path(conn, :main))
+                  {:error, _params} ->
+                    conn
+                    |> put_flash(:info, "There was some error during saving to database")
+                    |> redirect(to: Routes.grant_path(conn, :main))
+                end
               {:error, _params} ->
                   conn
                   |> put_flash(:info, "There was some error during saving to database")
@@ -178,8 +189,86 @@ defmodule RewardappWeb.GrantController do
       11 -> "november"
       12 -> "december"
     end
-
   end
 
+
+  #ADMIN FUNCTION
+
+  def admin(conn, params) do
+    changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
+    users = Rewardapp.Repo.all(RewardappWeb.User)
+    awards = Rewardapp.Repo.all(Rewardapp.Award)
+    render(conn, "admin.html", changeSet: changeSet, users: users, awards: awards)
+  end
+
+  def delete(conn, %{"id" => rewardID}) do
+
+    IO.puts("delete function +++++")
+    users = Rewardapp.Repo.all(RewardappWeb.User)
+    awards = Rewardapp.Repo.all(Rewardapp.Award)
+
+    #GET INFO FROM awards
+
+    IO.inspect(rewardID)
+    post = Rewardapp.Repo.get!(Rewardapp.Award, rewardID)
+    #userg = post.userg
+    #usergID = post.usergID
+    #userr = post.userr
+    userrID = post.userrID
+    pointsPost = post.points
+    #IO.inspect(userg)
+    #IO.inspect(userr)
+    #IO.inspect(points)
+    #IO.inspect(usergID)
+    #IO.inspect(userrID)
+
+
+    currentMonth = currentMonth(conn)
+
+    case Rewardapp.Repo.delete(post) do
+      {:ok, _struct} ->
+
+        #Give back points to userg
+        post = Rewardapp.Repo.get!(RewardappWeb.User, post.usergID)
+        currentPoints = Map.get(post, String.to_atom(currentMonth))
+        post = Ecto.Changeset.change(post, %{String.to_atom(currentMonth) => pointsPost + currentPoints})
+
+        case Rewardapp.Repo.update(post) do
+          {:ok, _struct} ->
+
+            #Take back points from userr
+
+            postr = Rewardapp.Repo.get!(RewardappWeb.User, userrID)
+            currentPoints = Map.get(postr, :points)
+            postr = Ecto.Changeset.change(postr, %{:points => currentPoints - pointsPost})
+
+            case Rewardapp.Repo.update(postr) do
+            {:ok, _params} ->
+              conn
+              |> put_flash(:info, "Deleted reward")
+              |> redirect(to: Routes.grant_path(conn, :admin))
+            {:error, params} ->
+              IO.inspect(params)
+              conn
+              |> put_flash(:error, "Error while deleting")
+              |> redirect(to: Routes.grant_path(conn, :admin))
+            end
+            {:error, params} ->
+              IO.inspect(params)
+              conn
+              |> put_flash(:error, "Error while deleting")
+              |> redirect(to: Routes.grant_path(conn, :admin))
+        end
+      {:error, params} ->
+        IO.inspect(params)
+        conn
+        |> put_flash(:error, "Error while deleting")
+        |> redirect(to: Routes.grant_path(conn, :admin))
+    end
+
+
+    IO.inspect(post)
+
+  end
 
 end

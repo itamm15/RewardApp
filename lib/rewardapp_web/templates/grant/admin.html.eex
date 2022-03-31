@@ -1,4 +1,13 @@
-<h4> Users </h4>
+<% currentMonth = currentMonth(@conn)%>
+
+<div class = "row">
+    <h4> Users </h4>
+    <h5 class = "col s2"> 
+        <%= "Points in #{String.capitalize(currentMonth)}" %> 
+    </h5>
+</div>
+
+
 <ul class = "collection">
     <%= for user <- @users do%>
         <li class = "collection-item">
@@ -9,3 +18,17 @@
         </li>
     <%end%>
 </ul>
+
+<h4> Awards </h4>
+<ul class = "collection">
+    <%= for award <- @awards do %>
+            <li class = "collection-item">
+                <%= "#{String.capitalize(award.userg)} granted #{award.points} points to #{String.capitalize(award.userr)}" %>
+                <div class = "right">
+                    <%= link "Delete", to: Routes.grant_path(@conn, :delete, award)%>
+                </div>
+            </li>
+    <%end%>
+</ul>
+
+

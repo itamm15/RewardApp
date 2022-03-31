@@ -20,6 +20,7 @@ defmodule RewardappWeb.User do
     field :role, :string
     field :september, :integer
     field :surname, :string
+    field :mail, :string
   end
 
   @spec changeset(
@@ -33,7 +34,7 @@ defmodule RewardappWeb.User do
   @doc false
   def changeset(user, attrs \\ %{}) do
     user
-    |> cast(attrs, [:name, :surname, :role, :points, :january, :february, :march, :april, :may, :june, :july, :august, :september, :october, :november, :december])
-    |> validate_required([:name, :surname, :role, :points, :january, :february, :march, :april, :may, :june, :july, :august, :september, :october, :november, :december])
+    |> cast(attrs, [:name, :surname, :role, :points, :mail, :january, :february, :march, :april, :may, :june, :july, :august, :september, :october, :november, :december])
+    |> validate_required([:name, :surname, :role, :points, :mail, :january, :february, :march, :april, :may, :june, :july, :august, :september, :october, :november, :december])
   end
 end

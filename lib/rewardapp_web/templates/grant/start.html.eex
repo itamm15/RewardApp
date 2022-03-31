@@ -1,7 +1,7 @@
 
 <% person2 = currentUser(@conn) %>
 <h4>
-<%= "Hello #{person2.name} #{person2.surname}. You have #{person2.points} points."%>
+<%= "Hello #{String.capitalize(person2.name)} #{String.capitalize(person2.surname)}. You have #{person2.points} points."%>
 <br>
 
 <%= "Your remaining points for given month:"%>
@@ -47,11 +47,24 @@
 <ul class = "collection">
     <%= for user <- @users do%>
         <li class = "collection-item">
-            <%= "#{user.name} #{user.surname}"%>
+            <%= "#{String.capitalize(user.name)} #{String.capitalize(user.surname)}"%>
             <div class = "right">
                 <%= link "Add points", to: Routes.grant_path(@conn, :add, user: user.id)%>
             </div>
         </li>
+    <%end%>
+</ul>
+
+
+<h4> Your granted points </h4>
+
+<ul class = "collection">
+    <%= for award <- @awards do %>
+        <%= if award.userg == person2.name do %>
+            <li class = "collection-item">
+                <%= "Granted #{award.points} points to #{String.capitalize(award.userr)}" %>
+            </li>
+        <%end%>
     <%end%>
 </ul>
 

@@ -7,6 +7,7 @@ defmodule Rewardapp.Repo.Migrations.CreateUsers do
       add :surname, :string
       add :role, :string
       add :points, :integer, default: 0
+      add :mail, :string
       add :january, :integer, default: 50
       add :february, :integer, default: 50
       add :march, :integer, default: 50
