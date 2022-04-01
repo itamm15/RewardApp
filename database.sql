@@ -137,13 +137,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 COPY public.awards (id, userg, "usergID", userr, "userrID", points) FROM stdin;
-19	mat	1	ter	3	5
-20	mat	1	dag	2	5
-23	mat	1	dag	2	20
-24	mat	1	mat	1	5
-26	dag	2	ter	3	5
-27	dag	2	mat	1	20
-28	kam	4	mat	1	5
+73	mat	1	kam	4	15
 \.
 
 
@@ -162,10 +156,10 @@ COPY public.schema_migrations (version, inserted_at) FROM stdin;
 --
 
 COPY public.users (id, name, surname, role, points, mail, january, february, march, april, may, june, july, august, september, october, november, december) FROM stdin;
-2	dag	kaz	member	25	dag.kaz@gmail.com	50	50	25	50	50	50	50	50	50	50	50	50
-4	kam	ig	member	0	kamig@gmail.com	50	50	45	50	50	50	50	50	50	50	50	50
-1	mat	osi	member	30	osinski.mateusz15@gmail.com	50	50	15	50	50	50	50	50	50	50	50	50
-3	ter	ewa	member	10	terew@gmail.com	50	50	50	50	50	50	50	50	50	50	50	50
+2	dag	kaz	member	0	dag.kaz@gmail.com	50	50	50	50	50	50	50	50	50	50	50	50
+3	ter	ewa	member	0	terew@gmail.com	50	50	50	50	50	50	50	50	50	50	50	50
+1	mat	osi	member	0	osinski.mateusz15@gmail.com	50	50	50	35	50	50	50	50	50	50	50	50
+4	kam	ig	member	15	kamig@gmail.com	50	50	50	50	50	50	50	50	50	50	50	50
 \.
 
 
@@ -173,7 +167,7 @@ COPY public.users (id, name, surname, role, points, mail, january, february, mar
 -- Name: awards_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.awards_id_seq', 28, true);
+SELECT pg_catalog.setval('public.awards_id_seq', 73, true);
 
 
 --
