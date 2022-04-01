@@ -186,7 +186,6 @@ defmodule RewardappWeb.GrantController do
 
     IO.inspect(rewardID)
     post = Rewardapp.Repo.get!(Rewardapp.Award, rewardID)
-    #userg = post.userg
     #usergID = post.usergID
     #userr = post.userr
     userrID = post.userrID
@@ -240,6 +239,152 @@ defmodule RewardappWeb.GrantController do
         |> put_flash(:error, "Error while deleting")
         |> redirect(to: Routes.grant_path(conn, :admin))
     end
+  end
+
+
+  def edit(conn, %{"id" => rewardID}) do
+    changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
+    users = Rewardapp.Repo.all(RewardappWeb.User)
+
+    award = Rewardapp.Repo.get!(Rewardapp.Award, rewardID)
+
+    render(conn, "edit.html", changeSet: changeSet, users: users, award: award)
+
+  end
+
+  def adminUpdate(conn, params) do
+    IO.puts("adminUpdate function +++++")
+    IO.inspect(params)
+
+    changeSet = RewardappWeb.User.changeset(%RewardappWeb.User{}, %{})
+    users = Rewardapp.Repo.all(RewardappWeb.User)
+    awards = Rewardapp.Repo.all(Rewardapp.Award)
+
+    rewardID = params["id"]
+    user = params["user"]
+    pointsTmp = user["points"]
+    pointsAct = String.to_integer(pointsTmp)
+
+    IO.puts("pointsTmp +++++")
+    IO.inspect(user)
+    IO.inspect(pointsTmp)
+    IO.inspect(pointsAct)
+    IO.inspect(rewardID)
+    #IO.inspect(points)
+
+    post = Rewardapp.Repo.get!(Rewardapp.Award, rewardID)
+
+    #FIRSTLY, I NEED TO RETURN GIVEN POINTS FROM USERG
+    #THEN, TAKE BACK POINTS FROM USERR
+    #AND FINALY, I CAN ASSIGN VALUE FROM ADMIN
+
+    #USERG
+
+    usergID = post.usergID
+    userrID = post.userrID
+    pointsPost = post.points
+    currentMonth = currentMonth(conn)
+
+    IO.puts("pointsPost +++++")
+    IO.inspect(pointsPost)
+
+    case Rewardapp.Repo.delete(post) do
+      {:ok, _params} ->
+        #Give back points to userg
+        post = Rewardapp.Repo.get!(RewardappWeb.User, post.usergID)
+        currentPoints = Map.get(post, String.to_atom(currentMonth))
+        post = Ecto.Changeset.change(post, %{String.to_atom(currentMonth) => pointsPost + currentPoints})
+
+        case Rewardapp.Repo.update(post) do
+          {:ok, _params} ->
+
+            #Take back points from userr
+
+            postr = Rewardapp.Repo.get!(RewardappWeb.User, userrID)
+            currentPoints = Map.get(postr, :points)
+            IO.puts("currentPoints ++++++")
+            IO.inspect(currentPoints)
+            IO.inspect(pointsPost)
+            postr = Ecto.Changeset.change(postr, %{:points => currentPoints - pointsPost})
+
+            case Rewardapp.Repo.update(postr) do
+              {:ok, _params} ->
+
+                #Points are returned and taken
+                #So now, I can grant new points to userr from userg
+
+                post = Rewardapp.Repo.get!(RewardappWeb.User, usergID)
+                currentPoints = Map.get(post, String.to_atom(currentMonth))
+
+                case result = currentPoints - pointsAct do
+                  result when result < 0 ->
+                    conn
+                    |> put_flash(:error, "You can not assign that number of points.")
+                    |> redirect(to: Routes.grant_path(conn, :edit, %{"award" => rewardID}))
+                  result when result >= 0 ->
+                    post = Rewardapp.Repo.get!(RewardappWeb.User, usergID)
+                    IO.puts("INSPECT POST OF USER +++++")
+                    IO.inspect(post)
+                    IO.inspect(currentPoints)
+                    usergName = post.name
+                    post = Ecto.Changeset.change(post, %{String.to_atom(currentMonth) => currentPoints - pointsAct})
+                    case Rewardapp.Repo.update(post) do
+                      {:ok, _struct} ->
+
+                        # CHOOSEN USER DATA UPDATE
+                        postC = Rewardapp.Repo.get!(RewardappWeb.User, userrID)
+                        previousPoints = postC.points
+                        userrName = postC.name
+
+                        case Rewardapp.Repo.update(Ecto.Changeset.change(postC, %{:points => previousPoints + pointsAct})) do
+                          {:ok, _struct } ->
+
+                            #IF POINTS WERE ADD TO BOTH USERS
+                            #I CAN ADD TO REWARDS TABLE INFORMATION
+                            #userg - user, that gave points
+                            #userr - user, that received points
+                            #points - number of points, that was given
+
+                            case Rewardapp.Repo.insert(%Rewardapp.Award{:userg => usergName, :userr => userrName, :points => pointsAct, :userrID => userrID, :usergID => usergID}) do
+                              {:ok, _struct} ->
+                                conn
+                                |> put_flash(:info, "Changed points")
+                                |> Plug.Conn.delete_session(:userInfo)
+                                |> redirect(to: Routes.grant_path(conn, :admin))
+                              {:error, _params} ->
+                                conn
+                                |> put_flash(:info, "There was some error during saving to database")
+                                |> redirect(to: Routes.grant_path(conn, :admin))
+                            end
+                          {:error, _params} ->
+                              conn
+                              |> put_flash(:info, "There was some error during saving to database")
+                              |> redirect(to: Routes.grant_path(conn, :admin))
+                        end
+
+                      {:error, _params} ->
+                          conn
+                          |> put_flash(:error, "Coult not delete given points")
+                          |> redirect(to: Routes.grant_path(conn, :admin))
+                      end
+                end
+
+              {:error, _params} ->
+                conn
+                |> put_flash(:error, "Coult not delete given points")
+                |> redirect(to: Routes.grant_path(conn, :admin))
+        end
+          {:error, _params} ->
+            conn
+            |> put_flash(:error, "Coult not delete given points")
+            |> redirect(to: Routes.grant_path(conn, :admin))
+        end
+      {:error, _params} ->
+        conn
+        |> put_flash(:error, "Coult not delete given points")
+        |> redirect(to: Routes.grant_path(conn, :admin))
+    end
+
   end
 
  #CURRENT DATA

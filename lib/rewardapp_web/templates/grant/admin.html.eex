@@ -25,6 +25,7 @@
             <li class = "collection-item">
                 <%= "#{String.capitalize(award.userg)} granted #{award.points} points to #{String.capitalize(award.userr)}" %>
                 <div class = "right">
+                    <%= link "Edit", to: Routes.grant_path(@conn, :edit, award)%>
                     <%= link "Delete", to: Routes.grant_path(@conn, :delete, award)%>
                 </div>
             </li>

@@ -1,0 +1,9 @@
+<h3> Change points </h3>
+
+<%= form_for @changeSet, Routes.grant_path(@conn, :adminUpdate, @award), fn f -> %>
+    <div class = "form-group">
+        <%= text_input f, :points, placeholder: "Points", class: "form-control"%>
+        <%= error_tag f, :points%>
+    </div>
+    <%= submit "Change points", class: "btn btn-primary"%>
+<%end%>

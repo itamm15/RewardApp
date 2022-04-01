@@ -29,7 +29,8 @@ defmodule RewardappWeb.Router do
     get "/add", GrantController, :add
     post "/add/:id", GrantController, :update
     get "/admin/delete/:id", GrantController, :delete
-
+    get "/admin/edit/:id", GrantController, :edit
+    post "/admin/edit/:id", GrantController, :adminUpdate
   end
 
   if Mix.env == :dev do
