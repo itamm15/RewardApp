@@ -11,7 +11,7 @@
 <ul class = "collection">
     <%= for user <- @users do%>
         <li class = "collection-item">
-            <%= "#{user.id}. #{user.name} #{user.surname}"%>
+            <%= "#{String.capitalize(user.name)} #{String.capitalize(user.surname)}"%>
             <div class = "right">
                 <%="#{user.points}"%>
             </div>
