@@ -49,7 +49,8 @@ defmodule Rewardapp.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:bamboo, "~> 0.8"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:quantum, "~> 3.0"}
     ]
   end
 

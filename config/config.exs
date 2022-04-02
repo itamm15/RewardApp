@@ -17,6 +17,20 @@ config :rewardapp, RewardappWeb.Endpoint,
   pubsub_server: Rewardapp.PubSub,
   live_view: [signing_salt: "YOSSI7L6"]
 
+config :rewardapp, Rewardapp.Scheduler,
+  jobs: [
+    # Every minute
+    {"* * * * *", fn -> IO.puts("Hello QUANTUM!") end},
+    # {"* * * * *", task: {Test.CleanBase, :clean, []}}
+
+    #{"* * * * *", fn -> :CleanBase.clean end},
+
+    #{"* * * * *", {Rewardapp.CleanBase, :clean, []}},
+
+    {"@monthly", {Rewardapp.CleanBase, :clean, []}}
+
+
+  ]
 
 
 

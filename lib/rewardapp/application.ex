@@ -7,6 +7,7 @@ defmodule Rewardapp.Application do
 
   @impl true
   def start(_type, _args) do
+    import Supervisor.Spec, warn: false
     children = [
       # Start the Ecto repository
       Rewardapp.Repo,
@@ -15,9 +16,10 @@ defmodule Rewardapp.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Rewardapp.PubSub},
       # Start the Endpoint (http/https)
-      RewardappWeb.Endpoint
+      RewardappWeb.Endpoint,
       # Start a worker by calling: Rewardapp.Worker.start_link(arg)
       # {Rewardapp.Worker, arg}
+      worker(Rewardapp.Scheduler, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
