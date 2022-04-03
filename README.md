@@ -31,3 +31,10 @@ E.g. INSERT INTO users (name, surname, role, mail) VALUES ('mat', 'osi', 'member
 * To log in as admin, just type admin 
 
 # The authentication is just related on the user name, which by default is treated as unique value. 
+
+
+
+To unlock unavailable port, execute following comamnds 
+sudo lsof -i :4000, where :4000 is just a number of port
+select given process PID (but not chrome!)
+sudo kill -9 PID
