@@ -12,6 +12,7 @@ config :rewardapp,
 
 # Configures the endpoint
 config :rewardapp, RewardappWeb.Endpoint,
+  http: [port: {:system, "PORT"}],
   url: [scheme: "https", host: "fast-reaches-10032.herokuapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   render_errors: [view: RewardappWeb.ErrorView, accepts: ~w(html json), layout: false],
