@@ -291,7 +291,7 @@ defmodule RewardappWeb.GrantController do
     post = Rewardapp.Repo.get!(RewardappWeb.User, usergID)
     currentPoints = Map.get(post, String.to_atom(currentMonth))
 
-    case result = currentPoints - pointsAct do
+    case result = (currentPoints + pointsPost) - pointsAct do
       result when result < 0 ->
         conn
         |> put_flash(:error, "You can not assign that number of points.")
