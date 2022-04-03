@@ -12,7 +12,8 @@ config :rewardapp,
 
 # Configures the endpoint
 config :rewardapp, RewardappWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [scheme: "https", host: "secret-forest-16469.herokuapp.com", port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   render_errors: [view: RewardappWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Rewardapp.PubSub,
   live_view: [signing_salt: "YOSSI7L6"]
