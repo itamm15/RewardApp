@@ -141,8 +141,10 @@ defmodule RewardappWeb.GrantController do
                   {:ok, _struct} ->
 
                     #ALL STATEMENTS ARE CORRECT, SO EMAIL MAY BE SENT
-                    Email.rewardEmail(userEmail) |> Mailer.deliver_now()
-                    IO.inspect(Rewardapp.Email.rewardEmail(userEmail))
+                    email = Email.rewardEmail(userEmail, points, sessionUser.name)
+                    email
+                    |> Mailer.deliver_now()
+                    IO.inspect(Rewardapp.Email.rewardEmail(userEmail, points, sessionUser.name))
                     conn
                     |> put_flash(:info, "Added points")
                     |> Plug.Conn.delete_session(:userInfo)
