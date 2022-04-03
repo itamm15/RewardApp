@@ -377,8 +377,15 @@ defmodule RewardappWeb.GrantController do
     end
 
 
+  end
 
 
+  @spec logout(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def logout(conn, params) do
+    conn
+    |> put_flash(:info, "Logged out")
+    |> Plug.Conn.configure_session(drop: true)
+    |> redirect(to: Routes.page_path(conn, :start))
   end
 
  #CURRENT DATA

@@ -1,6 +1,12 @@
 /* This file is for your main application CSS */
 @import "./phoenix.css";
 
+.logout-link{
+  width: 100%;
+  text-align: right;
+  float: right;
+}
+
 .admin-full{
   width: 100%;
 }

@@ -1,5 +1,13 @@
 
 <% person2 = currentUser(@conn) %>
+
+<div class = "row">
+    <div class = "col s1">
+        <%= link "Logout", to: Routes.grant_path(@conn, :logout)%>
+    </div>
+</div>
+
+
 <h4>
 <%= "Hello #{String.capitalize(person2.name)} #{String.capitalize(person2.surname)}. You have #{person2.points} points."%>
 <br>

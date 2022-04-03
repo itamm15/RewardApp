@@ -1,6 +1,13 @@
 <% currentMonth = currentMonth(@conn)%>
 
 <div class = "row">
+    <div class = "col s1">
+        <%= link "Logout", to: Routes.grant_path(@conn, :logout)%>
+    </div>
+</div>
+
+
+<div class = "row">
     <h4> Users </h4>
     <h5 class = "col s2"> 
         <%= "Points in #{String.capitalize(currentMonth)}" %> 
